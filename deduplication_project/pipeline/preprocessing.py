@@ -1,17 +1,14 @@
 # --- File: pipeline/preprocessing.py ---
 
 import pandas as pd
+import numpy as np
 from recordlinkage.preprocessing import clean
 
 def load_and_clean_data(filepath):
     """
-    Loads and cleans the dataset for deduplication.
-    
-    - Loads the CSV.
-    - Sets a proper index (assumes 'rec_id' or first column is the ID).
-    - Cleans and standardizes column names.
-    - Cleans the text data in key fields.
-    - Fills missing values to prevent errors.
+    Loads and cleans data.
+    - Creates 'name_1' and 'name_2' (canonical, alphabetized names)
+      to solve the swapped-name problem during preprocessing.
     """
     try:
         df = pd.read_csv(filepath)
@@ -37,10 +34,20 @@ def load_and_clean_data(filepath):
     fields_to_clean = ['given_name', 'surname', 'address_1', 'suburb', 'state']
     for col in fields_to_clean:
         if col in df.columns:
-            # Convert to string and apply standard cleaning
             df[col] = clean(df[col].astype(str))
     
-    # --- (Truncated columns are no longer needed) ---
+    # --- (NEW) Create Canonical Name Columns ---
+    print("Creating canonical name fields (name_1, name_2)...")
+    if 'given_name' in df.columns and 'surname' in df.columns:
+        # Stack the two columns, sort them at the row level, and unstack
+        names_stacked = df[['given_name', 'surname']].stack()
+        names_sorted = names_stacked.groupby(level=0).apply(np.sort)
+        
+        # Create the new columns
+        df['name_1'] = names_sorted.str[0]
+        df['name_2'] = names_sorted.str[1]
+    else:
+        print("Warning: 'given_name' or 'surname' not found. Cannot create canonical names.")
 
     # Fill any remaining NaNs with empty strings
     df = df.fillna("")
