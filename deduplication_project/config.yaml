@@ -10,6 +10,9 @@ indexing:
 classification:
   threshold: 5
 
+clustering:
+  threshold: 7
+
 comparison_fields:
   - field: given_name
     method: string

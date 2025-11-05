@@ -4,9 +4,8 @@ def find_duplicates(features, threshold):
     """
     Classifies pairs as duplicates using a "normalized sum."
     
-    This calculation ignores missing fields (NaNs) instead of
-    treating them as a 0.0 penalty, making it much more
-    robust to incomplete data.
+    (MODIFIED) Returns a Series of pairs that passed the
+    threshold, with their corresponding scores.
     """
     
     # 1. Sum the scores for available (non-NaN) fields
@@ -19,12 +18,11 @@ def find_duplicates(features, threshold):
     num_total_fields = len(features.columns)
     
     # 4. Calculate the normalized sum
-    # (Sum / Count) * Total = Scaled Score
-    # We use .fillna(0) to handle division by zero if a row has 0 valid fields
     normalized_sum = (sum_scores / count_scores).fillna(0) * num_total_fields
     
-    # 5. Classify using the same threshold as before
-    matches = features[normalized_sum >= threshold]
+    # 5. Classify using the threshold
+    matches = normalized_sum >= threshold
     
-    # Return the MultiIndex of matching pairs
-    return matches.index
+    # 6. (MODIFIED) Return the Series of passing scores
+    # This Series has the (pair) as the index and (score) as the value
+    return normalized_sum[matches]

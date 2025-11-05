@@ -21,3 +21,4 @@ CLASSIFICATION_THRESHOLD = _config['classification']['threshold']
 
 # Comparison fields
 COMPARISON_FIELDS = _config['comparison_fields']
+CLUSTERING_THRESHOLD =  _config['clustering']['threshold']
