@@ -4,30 +4,30 @@
 INPUT_FILE = "dedup_data.csv"
 RESULTS_FILE = "found_duplicate_pairs.csv"
 
-# Indexing (Blocking) configuration
-# 'postcode' is a good choice as it's reliable and splits the data well.
-# Using the first 3 chars of 'surname' is also a good alternative.
-BLOCK_ON_FIELD = "postcode"
+# --- (NEW) Indexing Configuration ---
+# 'window_size' is for Sorted Neighbourhood. It compares each
+# record with its 'n' closest neighbors after sorting.
+# A small window (3-5) is very fast and catches most typos.
+SORTING_WINDOW_SIZE = 9
 
 # Comparison fields and methods
-# We define which fields to compare and what logic to use.
-# 'method' can be 'string', 'exact', 'numeric', etc.
-# 'threshold' is for string comparisons (0.0 to 1.0)
-# --- File: config.py ---
-...
-
+# This advanced structure is still needed.
 COMPARISON_FIELDS = [
-    {"field": "given_name", "method": "string", "string_method": "jarowinkler", "threshold": 0.85},
-    {"field": "surname",    "method": "string", "string_method": "jarowinkler", "threshold": 0.85},
-    {"field": "address_1",  "method": "string", "string_method": "damerau_levenshtein", "threshold": 0.80},
-    {"field": "suburb",     "method": "string", "string_method": "damerau_levenshtein", "threshold": 0.85},
-    {"field": "state",      "method": "exact"}
+    # Normal comparisons
+    {"field": "given_name", "method": "string", "string_method": "jarowinkler", "threshold": 0.85, "label": "given_name"},
+    {"field": "surname",    "method": "string", "string_method": "jarowinkler", "threshold": 0.85, "label": "surname"},
+    {"field": "address_1",  "method": "string", "string_method": "damerau_levenshtein", "threshold": 0.80, "label": "address_1"},
+    {"field": "suburb",     "method": "string", "string_method": "damerau_levenshtein", "threshold": 0.85, "label": "suburb"},
+    {"field": "state",      "method": "exact", "label": "state"},
+    
+    # Crossed-field comparisons
+    {"field_left": "given_name", "field_right": "surname", 
+     "method": "string", "string_method": "jarowinkler", "threshold": 0.85, "label": "gv_vs_sn"},
+     
+    {"field_left": "surname", "field_right": "given_name", 
+     "method": "string", "string_method": "jarowinkler", "threshold": 0.85, "label": "sn_vs_gv"}
 ]
-...
 
 # Classification configuration
-# This is the minimum *sum* of similarity scores for a pair to be
-# considered a duplicate.
-# Max score = 5 (1.0 for each of the 5 fields).
-# A threshold of 4.0 means we allow for some typos in one or two fields.
-CLASSIFICATION_THRESHOLD = 2
+# Your best threshold was 3.0, which should work well here.
+CLASSIFICATION_THRESHOLD = 3.0

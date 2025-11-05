@@ -20,17 +20,12 @@ def load_and_clean_data(filepath):
         return None
 
     # --- Set a unique record index ---
-    # The recordlinkage library requires a unique index for each row.
-    # We'll try to find a 'rec_id' column or use the first column.
     if 'rec_id' in df.columns:
         df = df.set_index('rec_id')
     elif 'Unnamed: 0' in df.columns:
-        # Common case when index is saved to CSV without a name
         df = df.set_index('Unnamed: 0')
         df.index.name = 'rec_id'
     else:
-        # Fallback: assume the file has no ID column and create one.
-        # Note: This may complicate evaluation against ground truth.
         print("Warning: No clear ID column found. Using default integer index.")
         df = df.reset_index().rename(columns={"index": "rec_id"})
         df = df.set_index('rec_id')
@@ -44,6 +39,8 @@ def load_and_clean_data(filepath):
         if col in df.columns:
             # Convert to string and apply standard cleaning
             df[col] = clean(df[col].astype(str))
+    
+    # --- (Truncated columns are no longer needed) ---
 
     # Fill any remaining NaNs with empty strings
     df = df.fillna("")

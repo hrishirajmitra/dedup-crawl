@@ -20,8 +20,9 @@ def run_pipeline():
     print(f"Data loaded. Shape: {df.shape}")
 
     # --- 2. Indexing ---
-    print(f"Creating candidate pairs by blocking on '{config.BLOCK_ON_FIELD}'...")
-    candidate_pairs = indexing.create_candidate_pairs(df, config.BLOCK_ON_FIELD)
+    print(f"Creating candidate pairs...")
+    # Call the new indexer, which no longer needs a 'block_field' key
+    candidate_pairs = indexing.create_candidate_pairs(df, None) # <-- MODIFIED
     print(f"Found {len(candidate_pairs)} potential pairs for comparison.")
 
     # --- 3. Comparison ---
@@ -34,15 +35,13 @@ def run_pipeline():
     duplicate_pairs = classification.find_duplicates(features, config.CLASSIFICATION_THRESHOLD)
     print(f"** Found {len(duplicate_pairs)} duplicate pairs. **")
 
-# --- 5. Save Results ---
+    # --- 5. Save Results ---
     print(f"Saving results to {config.RESULTS_FILE}...")
     try:
         # Convert MultiIndex to a readable DataFrame
         duplicate_pairs_df = pd.DataFrame(index=duplicate_pairs).reset_index()
         
-        # --- FIX: Standardize column names ---
-        # Rename the first two columns (which contain the ID pairs)
-        # to 'level_0' and 'level_1' so the evaluation script can find them.
+        # Standardize column names
         if len(duplicate_pairs_df.columns) >= 2:
             new_cols = ['level_0', 'level_1'] + list(duplicate_pairs_df.columns[2:])
             duplicate_pairs_df.columns = new_cols
@@ -50,7 +49,6 @@ def run_pipeline():
             print("Error: Results DataFrame has fewer than 2 columns.")
 
         duplicate_pairs_df.to_csv(config.RESULTS_FILE, index=False)
-        # --- End of Fix ---
         
     except Exception as e:
         print(f"Error saving results: {e}")
