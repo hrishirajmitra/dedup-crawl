@@ -31,7 +31,10 @@ def load_and_clean_data(filepath):
     df.columns = [c.lower().strip() for c in df.columns]
 
     # --- Clean data in relevant fields ---
-    fields_to_clean = ['given_name', 'surname', 'address_1', 'suburb', 'state']
+    fields_to_clean = [
+            'given_name', 'surname', 'street_number', 'address_1', 'address_2',
+            'suburb', 'postcode', 'state', 'date_of_birth', 'soc_sec_id'
+        ]
     for col in fields_to_clean:
         if col in df.columns:
             df[col] = clean(df[col].astype(str))

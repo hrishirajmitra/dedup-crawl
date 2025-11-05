@@ -1,20 +1,30 @@
 # --- File: pipeline/classification.py ---
 
-import pandas as pd
-# --- File: pipeline/classification.py ---
-
 def find_duplicates(features, threshold):
     """
-    Classifies pairs as duplicates based on a simple sum threshold.
+    Classifies pairs as duplicates using a "normalized sum."
     
-    The advanced logic is no longer needed because the
-    swapped-name problem was solved in preprocessing.
+    This calculation ignores missing fields (NaNs) instead of
+    treating them as a 0.0 penalty, making it much more
+    robust to incomplete data.
     """
-    # Sum the scores from all comparison fields
-    total_score = features.sum(axis=1)
     
-    # Select pairs that meet or exceed the threshold
-    matches = features[total_score >= threshold]
+    # 1. Sum the scores for available (non-NaN) fields
+    sum_scores = features.sum(axis=1)
+    
+    # 2. Count how many fields were available (non-NaN)
+    count_scores = features.notna().sum(axis=1)
+    
+    # 3. Get the total number of fields we are comparing
+    num_total_fields = len(features.columns)
+    
+    # 4. Calculate the normalized sum
+    # (Sum / Count) * Total = Scaled Score
+    # We use .fillna(0) to handle division by zero if a row has 0 valid fields
+    normalized_sum = (sum_scores / count_scores).fillna(0) * num_total_fields
+    
+    # 5. Classify using the same threshold as before
+    matches = features[normalized_sum >= threshold]
     
     # Return the MultiIndex of matching pairs
     return matches.index
