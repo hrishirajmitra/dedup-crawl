@@ -1,0 +1,84 @@
+# --- File: config.yaml ---
+
+files:
+  input: "dedup_data.csv"
+  results: "found_duplicate_pairs.csv"
+
+indexing:
+  sorting_window_size: 15
+
+classification:
+  threshold: 5
+
+comparison_fields:
+  - field: given_name
+    method: string
+    string_method: jarowinkler
+    threshold: 0.85
+    label: given_name
+  
+  - field: surname
+    method: string
+    string_method: jarowinkler
+    threshold: 0.85
+    label: surname
+  
+  - field_left: given_name
+    field_right: surname
+    method: string
+    string_method: jarowinkler
+    threshold: 0.85
+    label: gv_vs_sn
+  
+  - field_left: surname
+    field_right: given_name
+    method: string
+    string_method: jarowinkler
+    threshold: 0.85
+    label: sn_vs_gv
+  
+  - field: street_number
+    method: string
+    string_method: jarowinkler
+    threshold: 0.85
+    label: street_number
+  
+  - field: address_1
+    method: string
+    string_method: damerau_levenshtein
+    threshold: 0.80
+    label: address_1
+  
+  - field: address_2
+    method: string
+    string_method: damerau_levenshtein
+    threshold: 0.80
+    label: address_2
+  
+  - field: suburb
+    method: string
+    string_method: damerau_levenshtein
+    threshold: 0.85
+    label: suburb
+  
+  - field: postcode
+    method: string
+    string_method: jarowinkler
+    threshold: 0.85
+    label: postcode
+  
+  - field: state
+    method: exact
+    label: state
+  
+  - field: date_of_birth
+    method: string
+    string_method: jarowinkler
+    threshold: 0.90
+    label: date_of_birth
+  
+  - field: soc_sec_id
+    method: string
+    string_method: jarowinkler
+    threshold: 0.90
+    label: soc_sec_id
