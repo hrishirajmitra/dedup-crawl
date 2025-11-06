@@ -1,0 +1,127 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+        
+<center>
+<h1>Crawler Graph</h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1>Crawler Graph</h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 90vh;
+                 background-color: #ffffff;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#e74c3c", "id": "page_m99oc2xp", "label": "page_m99oc2xp", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_m99oc2xp\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.046927\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 21", "value": 38.48240398281594}, {"color": "#e74c3c", "id": "page_t5u0vey8", "label": "page_t5u0vey8", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_t5u0vey8\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.109051\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 22", "value": 52.39701045989765}, {"color": "#e74c3c", "id": "page_c0dhlfs1", "label": "page_c0dhlfs1", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_c0dhlfs1\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.058047\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 16", "value": 41.79144345534905}, {"color": "#e74c3c", "id": "page_ohncd2c4", "label": "page_ohncd2c4", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_ohncd2c4\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.048259\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 25", "value": 38.90882071307133}, {"color": "#e74c3c", "id": "page_nqkbijok", "label": "page_nqkbijok", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_nqkbijok\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.096147\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 25", "value": 50.19779594533165}, {"color": "#e74c3c", "id": "page_ihrpbmdp", "label": "page_ihrpbmdp", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_ihrpbmdp\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.033898\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 23", "value": 33.74749045160213}, {"color": "#e74c3c", "id": "page_zgxbojoz", "label": "page_zgxbojoz", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_zgxbojoz\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.096629\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 24", "value": 50.28458747708995}, {"color": "#e74c3c", "id": "page_srjdka3h", "label": "page_srjdka3h", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_srjdka3h\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.133899\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 23", "value": 56.05170185988092}, {"color": "#e74c3c", "id": "page_hx6frdx6", "label": "page_hx6frdx6", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_hx6frdx6\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.049726\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 14", "value": 39.368373436072375}, {"color": "#e74c3c", "id": "page_2kadntd8", "label": "page_2kadntd8", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_2kadntd8\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.020516\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 26", "value": 27.333309609821175}, {"color": "#e74c3c", "id": "page_woikgan2", "label": "page_woikgan2", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_woikgan2\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.073286\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 11", "value": 45.58664656340443}, {"color": "#e74c3c", "id": "page_3xceayky", "label": "page_3xceayky", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_3xceayky\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.032949\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 27", "value": 33.35448408267381}, {"color": "#e74c3c", "id": "page_nle8vs22", "label": "page_nle8vs22", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_nle8vs22\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.016027\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 21", "value": 24.62086928073739}, {"color": "#e74c3c", "id": "page_nz14jnfn", "label": "page_nz14jnfn", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_nz14jnfn\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.041849\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 12", "value": 36.76757997200846}, {"color": "#e74c3c", "id": "page_8kc36ela", "label": "page_8kc36ela", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_8kc36ela\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.077119\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 18", "value": 46.43791441489243}, {"color": "#e74c3c", "id": "page_j2ydycb7", "label": "page_j2ydycb7", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_j2ydycb7\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.012311\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 25", "value": 22.05895407413501}, {"color": "#e74c3c", "id": "page_24totfo6", "label": "page_24totfo6", "shape": "dot", "title": "\u003cb\u003ePage ID:\u003c/b\u003e page_24totfo6\u003cbr\u003e\u003cb\u003ePageRank:\u003c/b\u003e 0.053402\u003cbr\u003e\u003cb\u003eUpdates:\u003c/b\u003e 27", "value": 40.4749134269559}]);
+                  edges = new vis.DataSet([{"arrows": "to", "from": "page_m99oc2xp", "to": "page_t5u0vey8"}, {"arrows": "to", "from": "page_m99oc2xp", "to": "page_c0dhlfs1"}, {"arrows": "to", "from": "page_m99oc2xp", "to": "page_ohncd2c4"}, {"arrows": "to", "from": "page_m99oc2xp", "to": "page_nqkbijok"}, {"arrows": "to", "from": "page_m99oc2xp", "to": "page_ihrpbmdp"}, {"arrows": "to", "from": "page_t5u0vey8", "to": "page_zgxbojoz"}, {"arrows": "to", "from": "page_t5u0vey8", "to": "page_srjdka3h"}, {"arrows": "to", "from": "page_t5u0vey8", "to": "page_nqkbijok"}, {"arrows": "to", "from": "page_c0dhlfs1", "to": "page_t5u0vey8"}, {"arrows": "to", "from": "page_c0dhlfs1", "to": "page_hx6frdx6"}, {"arrows": "to", "from": "page_c0dhlfs1", "to": "page_nqkbijok"}, {"arrows": "to", "from": "page_ohncd2c4", "to": "page_srjdka3h"}, {"arrows": "to", "from": "page_ohncd2c4", "to": "page_2kadntd8"}, {"arrows": "to", "from": "page_ohncd2c4", "to": "page_t5u0vey8"}, {"arrows": "to", "from": "page_ohncd2c4", "to": "page_m99oc2xp"}, {"arrows": "to", "from": "page_ohncd2c4", "to": "page_ihrpbmdp"}, {"arrows": "to", "from": "page_nqkbijok", "to": "page_srjdka3h"}, {"arrows": "to", "from": "page_nqkbijok", "to": "page_woikgan2"}, {"arrows": "to", "from": "page_ihrpbmdp", "to": "page_3xceayky"}, {"arrows": "to", "from": "page_ihrpbmdp", "to": "page_nle8vs22"}, {"arrows": "to", "from": "page_ihrpbmdp", "to": "page_m99oc2xp"}, {"arrows": "to", "from": "page_ihrpbmdp", "to": "page_t5u0vey8"}, {"arrows": "to", "from": "page_zgxbojoz", "to": "page_nqkbijok"}, {"arrows": "to", "from": "page_zgxbojoz", "to": "page_nz14jnfn"}, {"arrows": "to", "from": "page_zgxbojoz", "to": "page_srjdka3h"}, {"arrows": "to", "from": "page_zgxbojoz", "to": "page_ohncd2c4"}, {"arrows": "to", "from": "page_zgxbojoz", "to": "page_hx6frdx6"}, {"arrows": "to", "from": "page_srjdka3h", "to": "page_zgxbojoz"}, {"arrows": "to", "from": "page_srjdka3h", "to": "page_t5u0vey8"}, {"arrows": "to", "from": "page_hx6frdx6", "to": "page_c0dhlfs1"}, {"arrows": "to", "from": "page_hx6frdx6", "to": "page_8kc36ela"}, {"arrows": "to", "from": "page_2kadntd8", "to": "page_t5u0vey8"}, {"arrows": "to", "from": "page_2kadntd8", "to": "page_nz14jnfn"}, {"arrows": "to", "from": "page_2kadntd8", "to": "page_ohncd2c4"}, {"arrows": "to", "from": "page_2kadntd8", "to": "page_woikgan2"}, {"arrows": "to", "from": "page_2kadntd8", "to": "page_j2ydycb7"}, {"arrows": "to", "from": "page_woikgan2", "to": "page_nqkbijok"}, {"arrows": "to", "from": "page_woikgan2", "to": "page_srjdka3h"}, {"arrows": "to", "from": "page_woikgan2", "to": "page_24totfo6"}, {"arrows": "to", "from": "page_woikgan2", "to": "page_8kc36ela"}, {"arrows": "to", "from": "page_3xceayky", "to": "page_ohncd2c4"}, {"arrows": "to", "from": "page_3xceayky", "to": "page_24totfo6"}, {"arrows": "to", "from": "page_3xceayky", "to": "page_c0dhlfs1"}, {"arrows": "to", "from": "page_3xceayky", "to": "page_woikgan2"}, {"arrows": "to", "from": "page_nle8vs22", "to": "page_hx6frdx6"}, {"arrows": "to", "from": "page_nle8vs22", "to": "page_3xceayky"}, {"arrows": "to", "from": "page_nle8vs22", "to": "page_ohncd2c4"}, {"arrows": "to", "from": "page_nz14jnfn", "to": "page_24totfo6"}, {"arrows": "to", "from": "page_nz14jnfn", "to": "page_3xceayky"}, {"arrows": "to", "from": "page_nz14jnfn", "to": "page_8kc36ela"}, {"arrows": "to", "from": "page_nz14jnfn", "to": "page_ihrpbmdp"}, {"arrows": "to", "from": "page_8kc36ela", "to": "page_woikgan2"}, {"arrows": "to", "from": "page_8kc36ela", "to": "page_24totfo6"}, {"arrows": "to", "from": "page_8kc36ela", "to": "page_srjdka3h"}, {"arrows": "to", "from": "page_8kc36ela", "to": "page_nz14jnfn"}, {"arrows": "to", "from": "page_8kc36ela", "to": "page_c0dhlfs1"}, {"arrows": "to", "from": "page_j2ydycb7", "to": "page_2kadntd8"}, {"arrows": "to", "from": "page_j2ydycb7", "to": "page_3xceayky"}, {"arrows": "to", "from": "page_j2ydycb7", "to": "page_hx6frdx6"}, {"arrows": "to", "from": "page_24totfo6", "to": "page_8kc36ela"}, {"arrows": "to", "from": "page_24totfo6", "to": "page_m99oc2xp"}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {"physics": {"solver": "forceAtlas2Based", "forceAtlas2Based": {"avoidOverlap": 0.5}}, "edges": {"smooth": {"type": "curvedCW", "roundness": 0.1}, "arrows": {"to": {"enabled": true, "scaleFactor": 0.5}}}};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+
+                  
+
+
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>

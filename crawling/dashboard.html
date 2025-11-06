@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crawler Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #f4f7f6; --header-bg: #ffffff; --card-bg: #ffffff;
+            --border-color: #e0e0e0; --text-color: #333; --text-light: #777;
+            --accent-blue: #3498db; --accent-red: #e74c3c;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color); color: var(--text-color); margin: 0;
+        }
+        header {
+            background: var(--header-bg); border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        header h1 { margin: 0; font-size: 1.5rem; color: var(--accent-blue); }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+        .link-card {
+            background: var(--accent-blue); color: white; border-radius: 8px;
+            padding: 1.5rem 2rem; margin-bottom: 2rem; text-align: center;
+        }
+        .link-card a {
+            color: white; font-size: 1.25rem; font-weight: 600; text-decoration: none;
+        }
+        .link-card a:hover { text-decoration: underline; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+        }
+        .stat-card, .list-card {
+            background: var(--card-bg); border-radius: 8px;
+            padding: 1.5rem; border: 1px solid var(--border-color);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .stat-card .label {
+            font-size: 0.9rem; color: var(--text-light); margin-bottom: 0.25rem;
+            text-transform: uppercase;
+        }
+        .stat-card .value {
+            font-size: 1.75rem; font-weight: 600; color: var(--accent-blue);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .stat-card .value.red { color: var(--accent-red); }
+        .list-card h3 {
+            font-size: 1.1rem; margin: 0 0 0.75rem 0; border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 0.5rem;
+        }
+        .list-card ul { list-style: none; padding: 0; margin: 0; }
+        .list-card li {
+            display: flex; justify-content: space-between; font-size: 0.95rem;
+            padding: 0.5rem 0; border-bottom: 1px solid #f0f0f0;
+        }
+        .list-card li:last-child { border-bottom: none; }
+        .list-card li span:first-child { font-weight: 500; }
+        .list-card li span:last-child { color: var(--text-light); font-weight: 400; }
+        footer {
+            text-align: center; margin-top: 2rem; font-size: 0.8rem; color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <header><h1>Crawler Dashboard</h1></header>
+    <div class="container">
+        <div class="link-card">
+            <a href="graph.html" target="_blank">
+                ► Open Live Interactive Graph (graph.html)
+            </a>
+        </div>
+        
+        <div class="grid-container">
+            <div>
+                <h2>Overall Statistics</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="label">Total Pages</div>
+                        <div class="value">17</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Total Links</div>
+                        <div class="value">61</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Total Updates</div>
+                        <div class="value red">343</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">Most Active Page</div>
+                        <div class="value red" title="page_3xceayky">page_3xceayky</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list-card">
+                <h3>Top 5 Pages (PageRank)</h3>
+                <ul><li><span>page_srjdka3h</span><span>0.1339</span></li><li><span>page_t5u0vey8</span><span>0.1091</span></li><li><span>page_zgxbojoz</span><span>0.0966</span></li><li><span>page_nqkbijok</span><span>0.0961</span></li><li><span>page_8kc36ela</span><span>0.0771</span></li></ul>
+            </div>
+            
+            <div class="list-card">
+                <h3>Top 5 Most Active Pages</h3>
+                <ul><li><span>page_3xceayky</span><span>27 versions</span></li><li><span>page_24totfo6</span><span>27 versions</span></li><li><span>page_2kadntd8</span><span>26 versions</span></li><li><span>page_ohncd2c4</span><span>25 versions</span></li><li><span>page_nqkbijok</span><span>25 versions</span></li></ul>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>Dashboard updated: 2025-11-06 21:38:40</p>
+    </footer>
+</body>
+</html>
+    
