@@ -36,7 +36,7 @@ COMPARISON_FIELDS = [
 ]
 
 # Classification configuration
-CLASSIFICATION_THRESHOLD = 4
+CLASSIFICATION_THRESHOLD = 6
 
 # Clustering configuration
 CLUSTERING_THRESHOLD = 8

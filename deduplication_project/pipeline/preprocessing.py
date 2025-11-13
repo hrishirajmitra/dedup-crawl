@@ -52,9 +52,5 @@ def load_and_clean_data(filepath):
         df['given_name_trunc'] = df['given_name'].apply(get_trunc)
     if 'surname' in df.columns:
         df['surname_trunc'] = df['surname'].apply(get_trunc)
-    # --- (NEW) ---
-    if 'postcode' in df.columns:
-        # Use first 3 digits of postcode
-        df['postcode_trunc'] = df['postcode'].apply(lambda x: get_trunc(x, length=3))
         
     return df
