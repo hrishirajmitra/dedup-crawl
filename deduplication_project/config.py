@@ -31,17 +31,14 @@ COMPARISON_FIELDS = [
 
     # --- Address Fields (Weight: 0.5 - 1.5 each = 6.0 total) ---
     # (TUNED) Increased weight of address fields
-    {"field": "address_1", "method": "string", "string_method": "damerau_levenshtein", "threshold": 0.80, "label": "address_1", "weight": 1.5}, # <-- Tuned
-    {"field": "postcode",  "method": "string", "string_method": "jarowinkler", "threshold": 0.85, "label": "postcode",  "weight": 1.5}, # <-- Tun.
+    {"field": "address_1", "method": "string", "string_method": "damerau_levenshtein", "threshold": 0.80, "label": "address_1", "weight": 1.5},
+    {"field": "postcode",  "method": "string", "string_method": "jarowinkler", "threshold": 0.85, "label": "postcode",  "weight": 1.5},
     {"field":"street_number", "method": "string", "string_method": "jarowinkler", "threshold": 0.85, "label": "street_number", "weight": 1.0},
     {"field": "suburb",    "method": "string", "string_method": "damerau_levenshtein", "threshold": 0.85, "label": "suburb",    "weight": 1.0},
     {"field": "state",     "method": "exact", "label": "state",     "weight": 0.25},
     {"field": "address_2", "method": "string", "string_method": "damerau_levenshtein", "threshold": 0.80, "label": "address_2", "weight": 0.25},
 ]
-
-# Classification configuration
-# Max score is 16.0. Let's start with your best threshold.
 CLASSIFICATION_THRESHOLD = 7.5
 
 # Clustering configuration
-CLUSTERING_THRESHOLD = 12.0
+CLUSTERING_THRESHOLD = 10
