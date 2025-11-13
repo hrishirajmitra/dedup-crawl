@@ -7,7 +7,7 @@ from recordlinkage.preprocessing import clean
 def load_and_clean_data(filepath):
     """
     Loads and cleans data.
-    - Preserves NaNs for robust scoring.
+    - Manually cleans only non-null values to preserve NaNs.
     - Creates 'trunc' (truncated) fields for indexing.
     """
     try:

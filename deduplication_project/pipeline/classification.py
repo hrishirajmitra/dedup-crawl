@@ -1,82 +1,74 @@
 # --- File: pipeline/classification.py ---
 
 import pandas as pd
-import numpy as np
+import numpy as np  # <-- Make sure this is imported
 import config
 
-def _get_normalized_score(features, fields, weights):
-    """
-    Helper function to calculate a weighted, normalized score
-    for a specific set of fields.
-    """
-    # Filter to fields that actually exist in the features
-    existing_fields = [f for f in fields if f in features.columns]
-    if not existing_fields:
-        return 0
-        
-    sub_features = features[existing_fields]
-    sub_weights = weights[existing_fields]
-    
-    # Calculate weighted scores
-    weighted_scores = sub_features * sub_weights
-    
-    # Sum the weighted scores for available (non-NaN) fields
-    sum_scores = weighted_scores.sum(axis=1)
-    
-    # Sum the *weights* of the available (non-NaN) fields
-    available_weights_features = sub_features.notna() * sub_weights
-    count_scores = available_weights_features.sum(axis=1)
-    
-    # Get the total possible weight for this group of fields
-    num_total_fields = sub_weights.sum()
-    
-    # Calculate the normalized sum (score 0-N)
-    normalized_sum = (sum_scores / count_scores).fillna(0) * num_total_fields
-    
-    return normalized_sum
+# --- (NEW) Outlier Trimming Configuration ---
+# If a pair's average score is ABOVE this...
+TRIM_AVG_THRESHOLD = 0.8
+# ...and its minimum score is BELOW this...
+TRIM_MIN_THRESHOLD = 0.1
+# ...we will ignore the single lowest score.
 
 def find_duplicates(features, threshold):
     """
-    Classifies pairs as duplicates using hybrid logic:
-    1. 'name_score' is a SIMPLE SUM (acts as a gate).
-    2. 'address_score' and 'detail_score' are NORMALIZED & WEIGHTED.
+    Classifies pairs as duplicates using a "Trimmed Weighted Normalized Sum."
+    
+    This is the most advanced classifier:
+    1. It finds and "trims" (ignores) outlier low scores
+       on otherwise high-matching pairs.
+    2. It then calculates the "Weighted Normalized Sum" on
+       the remaining (non-NaN) fields.
     """
     
-    # 1. Get the weights from config
+    # --- 1. (NEW) Outlier Trimming Logic ---
+    
+    # Calculate the unweighted mean and min for all pairs
+    unweighted_mean = features.mean(axis=1)
+    unweighted_min = features.min(axis=1)
+    
+    # Find the pairs that meet our outlier condition
+    outlier_mask = (unweighted_mean > TRIM_AVG_THRESHOLD) & \
+                   (unweighted_min < TRIM_MIN_THRESHOLD)
+    
+    if outlier_mask.any():
+        print(f"Trimming outliers from {outlier_mask.sum()} pairs...")
+        
+        # Get the field name (label) of the lowest score for each outlier row
+        outlier_field_labels = features[outlier_mask].idxmin(axis=1)
+        
+        # Convert those specific [row, col] locations to np.nan
+        # This "trims" the single outlier score.
+        for row_index, col_label in outlier_field_labels.items():
+            features.at[row_index, col_label] = np.nan
+            
+    # --- 2. (EXISTING) Weighted Normalized Sum Logic ---
+    
+    # Get the weights from config
     weights = {
         comp['label']: comp.get('weight', 1.0) 
         for comp in config.COMPARISON_FIELDS
     }
-    weights = pd.Series(weights)
-
-    # --- 1. Calculate the 'name_score' (Simple Sum) ---
-    # This is our 'gate' - must have *some* name similarity
-    score_gg = features.get('given_name', 0).fillna(0) * weights.get('given_name', 1)
-    score_ss = features.get('surname', 0).fillna(0) * weights.get('surname', 1)
-    name_match_score = score_gg + score_ss
+    weights_series = pd.Series(weights)
     
-    score_gvsn = features.get('gv_vs_sn', 0).fillna(0) * weights.get('gv_vs_sn', 1)
-    score_sngv = features.get('sn_vs_gv', 0).fillna(0) * weights.get('sn_vs_gv', 1)
-    cross_match_score = score_gvsn + score_sngv
+    # Calculate the weighted scores (score * weight)
+    # This will now ignore the np.nan values we just added
+    weighted_features = features * weights_series
     
-    # Get the best possible name score
-    final_name_score = name_match_score.combine(cross_match_score, max)
+    # Sum the weighted scores for available (non-NaN) fields
+    sum_scores = weighted_features.sum(axis=1)
     
-    # --- 2. Calculate the 'address_score' (Normalized & Weighted) ---
-    address_fields = [
-        'street_number', 'address_1', 'address_2',
-        'suburb', 'postcode', 'state'
-    ]
-    address_score = _get_normalized_score(features, address_fields, weights)
-
-    # --- 3. Calculate the 'detail_score' (Normalized & Weighted) ---
-    detail_fields = ['date_of_birth', 'soc_sec_id']
-    detail_score = _get_normalized_score(features, detail_fields, weights)
+    # Sum the *weights* of the available (non-NaN) fields
+    available_weights_features = features.notna() * weights_series
+    count_scores = available_weights_features.sum(axis=1)
     
-    # --- 4. Calculate total score ---
-    # Total = (Best Name) + (Norm. Address) + (Norm. Details)
-    total_score = final_name_score + address_score + detail_score
+    # Get the total possible weight (max score)
+    num_total_fields = weights_series.sum()
     
-    # --- 5. Classify ---
-    matches = total_score >= threshold
-    return total_score[matches]
+    # Calculate the normalized weighted sum
+    normalized_sum = (sum_scores / count_scores).fillna(0) * num_total_fields
+    
+    # Classify and return the passing scores
+    matches = normalized_sum >= threshold
+    return normalized_sum[matches]
